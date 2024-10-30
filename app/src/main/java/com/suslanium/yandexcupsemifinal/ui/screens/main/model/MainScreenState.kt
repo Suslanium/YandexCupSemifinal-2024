@@ -10,10 +10,9 @@ data class MainScreenState(
     val selectedWidthPx: Float,
     val interactionType: InteractionType,
     val additionalToolsState: AdditionalToolsState,
-    private val isRedoAvailableProvider: () -> Boolean,
-    private val isUndoAvailableProvider: () -> Boolean,
-    private val pathsProvider: () -> List<PathInfo>,
-    private val currentPathPointsProvider: () -> List<Offset>,
+    val frames: List<UiFrame>,
+    val currentFrameIndex: Int,
+    val currentPathPoints: List<Offset>,
 ) {
     val actualColor: Color
         get() = when (interactionType) {
@@ -28,14 +27,12 @@ data class MainScreenState(
         }
 
     val isUndoAvailable: Boolean
-        get() = isUndoAvailableProvider()
+        get() = frames[currentFrameIndex].paths.isNotEmpty()
 
     val isRedoAvailable: Boolean
-        get() = isRedoAvailableProvider()
+        get() = frames[currentFrameIndex].redoStack.isNotEmpty()
 
-    val paths: List<PathInfo>
-        get() = pathsProvider()
+    val isFrameDeletionAvailable: Boolean
+        get() = currentFrameIndex > 0
 
-    val currentPathPoints: List<Offset>
-        get() = currentPathPointsProvider()
 }

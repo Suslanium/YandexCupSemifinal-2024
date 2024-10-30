@@ -6,10 +6,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.AdditionalToolsState
-import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenState
+import com.suslanium.yandexcupsemifinal.ui.screens.main.model.Frame
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.InteractionType
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenEvent
-import com.suslanium.yandexcupsemifinal.ui.screens.main.model.PathInfo
+import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenState
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.createPathInfo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,9 +20,8 @@ class MainViewModel(
     defaultColor: Color,
 ) : ViewModel() {
 
-    private val paths = mutableStateListOf<PathInfo>()
+    private val frames = mutableStateListOf(Frame())
     private val currentPathPoints = mutableStateListOf<Offset>()
-    private val redoStack = mutableStateListOf<PathInfo>()
 
     private val _state = MutableStateFlow(
         MainScreenState(
@@ -30,10 +29,9 @@ class MainViewModel(
             selectedWidthPx = defaultLineWidthPx,
             interactionType = InteractionType.Drawing,
             additionalToolsState = AdditionalToolsState.Hidden,
-            isRedoAvailableProvider = { redoStack.isNotEmpty() },
-            isUndoAvailableProvider = { paths.isNotEmpty() },
-            pathsProvider = { paths },
-            currentPathPointsProvider = { currentPathPoints },
+            currentPathPoints = currentPathPoints,
+            frames = frames,
+            currentFrameIndex = 0,
         )
     )
     val state = _state.asStateFlow()
@@ -53,8 +51,9 @@ class MainViewModel(
                     currentPathPoints = currentPathPoints,
                     state = _state.value,
                 )
-                paths.add(pathInfo)
-                redoStack.clear()
+                val frame = frames[_state.value.currentFrameIndex]
+                frame.mutablePaths.add(pathInfo)
+                frame.mutableRedoStack.clear()
                 currentPathPoints.clear()
             }
 
@@ -63,19 +62,21 @@ class MainViewModel(
             }
 
             MainScreenEvent.Redo -> {
-                redoStack.removeLastOrNull()?.let { pathInfo ->
-                    paths.add(pathInfo)
+                val frame = frames[_state.value.currentFrameIndex]
+                frame.mutableRedoStack.removeLastOrNull()?.let { pathInfo ->
+                    frame.mutablePaths.add(pathInfo)
                 }
             }
 
             MainScreenEvent.Undo -> {
-                paths.removeLastOrNull()?.let { pathInfo ->
-                    redoStack.add(pathInfo)
+                val frame = frames[_state.value.currentFrameIndex]
+                frame.mutablePaths.removeLastOrNull()?.let { pathInfo ->
+                    frame.mutableRedoStack.add(pathInfo)
                 }
             }
 
             is MainScreenEvent.ColorSelected -> {
-                if (state.value.additionalToolsState == AdditionalToolsState.Hidden) return
+                if (_state.value.additionalToolsState == AdditionalToolsState.Hidden) return
                 _state.update {
                     it.copy(
                         selectedColor = event.color,
@@ -99,7 +100,7 @@ class MainViewModel(
 
             MainScreenEvent.ExtendedColorSelectorClicked -> {
                 val additionalToolsState =
-                    state.value.additionalToolsState as? AdditionalToolsState.ColorSelector ?: return
+                    _state.value.additionalToolsState as? AdditionalToolsState.ColorSelector ?: return
                 _state.update {
                     it.copy(
                         additionalToolsState = additionalToolsState.copy(
@@ -124,6 +125,28 @@ class MainViewModel(
             is MainScreenEvent.WidthSelected -> {
                 _state.update {
                     it.copy(selectedWidthPx = event.widthPx)
+                }
+            }
+
+            MainScreenEvent.DeleteFrameClicked -> {
+                if (_state.value.currentFrameIndex > 0) {
+                    if (currentPathPoints.isNotEmpty()) {
+                        currentPathPoints.clear()
+                    }
+                    _state.value = _state.value.copy(
+                        currentFrameIndex = _state.value.currentFrameIndex - 1,
+                    )
+                    frames.removeAt(_state.value.currentFrameIndex + 1)
+                }
+            }
+
+            MainScreenEvent.NewFrameClicked -> {
+                if (currentPathPoints.isNotEmpty()) {
+                    processEvent(MainScreenEvent.PathFinished)
+                }
+                frames.add(_state.value.currentFrameIndex + 1, Frame())
+                _state.update {
+                    it.copy(currentFrameIndex = it.currentFrameIndex + 1)
                 }
             }
         }

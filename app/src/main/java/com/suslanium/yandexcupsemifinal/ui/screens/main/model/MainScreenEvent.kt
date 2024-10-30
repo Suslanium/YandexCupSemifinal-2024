@@ -23,6 +23,10 @@ sealed interface MainScreenEvent {
 
     data class WidthSelected(val widthPx: Float) : MainScreenEvent
 
+    data object NewFrameClicked : MainScreenEvent
+
+    data object DeleteFrameClicked : MainScreenEvent
+
     data object Undo : MainScreenEvent
 
     data object Redo : MainScreenEvent

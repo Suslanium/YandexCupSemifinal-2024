@@ -47,8 +47,23 @@ fun DrawZone(
             }
     ) {
         with(drawContext.canvas.nativeCanvas) {
-            val checkPoint = saveLayer(null, null)
-            state.paths.forEach { pathInfo ->
+            if (state.currentFrameIndex > 0) {
+                val firstCheckPoint = saveLayer(null, null)
+                state.frames[state.currentFrameIndex - 1].paths.forEach { pathInfo ->
+                    drawPath(
+                        color = pathInfo.color.copy(alpha = 0.5f),
+                        path = pathInfo.path,
+                        style = Stroke(
+                            width = pathInfo.width,
+                            cap = StrokeCap.Round,
+                        ),
+                        blendMode = pathInfo.blendMode,
+                    )
+                }
+                restoreToCount(firstCheckPoint)
+            }
+            val secondCheckPoint = saveLayer(null, null)
+            state.frames[state.currentFrameIndex].paths.forEach { pathInfo ->
                 drawPath(
                     color = pathInfo.color,
                     path = pathInfo.path,
@@ -68,7 +83,7 @@ fun DrawZone(
                 ),
                 blendMode = state.blendMode,
             )
-            restoreToCount(checkPoint)
+            restoreToCount(secondCheckPoint)
         }
     }
 }
