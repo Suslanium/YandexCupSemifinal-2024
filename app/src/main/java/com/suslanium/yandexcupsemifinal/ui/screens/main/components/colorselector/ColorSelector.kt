@@ -32,7 +32,6 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.suslanium.yandexcupsemifinal.R
 import com.suslanium.yandexcupsemifinal.ui.screens.main.components.colorselector.extended.ExtendedColorSelector
-import com.suslanium.yandexcupsemifinal.ui.screens.main.model.ColorSelectorState
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenEvent
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenState
 import com.suslanium.yandexcupsemifinal.ui.theme.Primary
@@ -43,9 +42,9 @@ private val BottomContentHeight = 48.dp
 private val SelectorRowPadding = 16.dp
 private val SelectorRowContentElementSize = 32.dp
 private val SelectorRowHeight = SelectorRowContentElementSize + SelectorRowPadding * 2
-private val OffsetHeight = BottomContentHeight + SelectorRowHeight
+private val OffsetHeight = BottomContentHeight + SelectorRowHeight + 50.dp
 private val SelectorRowWidth = SelectorRowContentElementSize * 5 + SelectorRowPadding * 6
-private val ExpandedSelectorBottomOffset = OffsetHeight + 8.dp
+private val ExpandedSelectorBottomOffset = BottomContentHeight + SelectorRowHeight + 8.dp
 
 @Composable
 fun BoxScope.ColorSelector(
@@ -56,7 +55,7 @@ fun BoxScope.ColorSelector(
         WindowInsets.systemBars.getBottom(density = this) + OffsetHeight.toPx()
     }
     val offsetY by animateFloatAsState(
-        targetValue = if (state.colorSelectorState == ColorSelectorState.Hidden) offsetHeight else 0f,
+        targetValue = if (!state.additionalToolsState.isColorSelectorVisible) offsetHeight else 0f,
     )
 
     Row(
@@ -78,7 +77,7 @@ fun BoxScope.ColorSelector(
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_palette),
                 contentDescription = null,
-                tint = if (state.colorSelectorState == ColorSelectorState.Expanded) {
+                tint = if (state.additionalToolsState.isColorSelectorExpanded) {
                     Primary
                 } else {
                     Color.White
@@ -107,7 +106,7 @@ fun BoxScope.ColorSelector(
         )
     }
     AnimatedVisibility(
-        state.colorSelectorState == ColorSelectorState.Expanded,
+        state.additionalToolsState.isColorSelectorExpanded,
         modifier = Modifier
             .align(Alignment.BottomCenter)
             .padding(bottom = ExpandedSelectorBottomOffset),

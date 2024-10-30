@@ -19,6 +19,10 @@ sealed interface MainScreenEvent {
 
     data class ColorSelected(val color: Color) : MainScreenEvent
 
+    data object WidthSelectorClicked : MainScreenEvent
+
+    data class WidthSelected(val widthPx: Float) : MainScreenEvent
+
     data object Undo : MainScreenEvent
 
     data object Redo : MainScreenEvent

@@ -17,7 +17,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.suslanium.yandexcupsemifinal.R
-import com.suslanium.yandexcupsemifinal.ui.screens.main.model.ColorSelectorState
+import com.suslanium.yandexcupsemifinal.ui.screens.main.model.AdditionalToolsState
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenEvent
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenState
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.InteractionType
@@ -52,6 +52,22 @@ fun BottomToolbar(
         }
         Spacer(modifier = Modifier.width(16.dp))
         IconButton(
+            onClick = { onEvent(MainScreenEvent.WidthSelectorClicked) },
+            modifier = Modifier.size(32.dp),
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.ic_menu),
+                contentDescription = null,
+                modifier = Modifier.size(32.dp),
+                tint = if (state.additionalToolsState == AdditionalToolsState.WidthSelector) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    MaterialTheme.colorScheme.onSurface
+                },
+            )
+        }
+        Spacer(modifier = Modifier.width(16.dp))
+        IconButton(
             onClick = { onEvent(MainScreenEvent.ColorSelectorClicked) },
             modifier = Modifier.size(32.dp),
         ) {
@@ -65,7 +81,7 @@ fun BottomToolbar(
                     .border(
                         width = 1.5.dp,
                         color = MaterialTheme.colorScheme.primary.copy(
-                            alpha = if (state.colorSelectorState != ColorSelectorState.Hidden) 1f else 0f,
+                            alpha = if (state.additionalToolsState.isColorSelectorVisible) 1f else 0f,
                         ),
                         shape = CircleShape,
                     )

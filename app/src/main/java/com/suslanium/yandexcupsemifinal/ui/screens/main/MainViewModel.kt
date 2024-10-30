@@ -5,7 +5,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.suslanium.yandexcupsemifinal.ui.screens.main.model.ColorSelectorState
+import com.suslanium.yandexcupsemifinal.ui.screens.main.model.AdditionalToolsState
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenState
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.InteractionType
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenEvent
@@ -29,7 +29,7 @@ class MainViewModel(
             selectedColor = defaultColor,
             selectedWidthPx = defaultLineWidthPx,
             interactionType = InteractionType.Drawing,
-            colorSelectorState = ColorSelectorState.Hidden,
+            additionalToolsState = AdditionalToolsState.Hidden,
             isRedoAvailableProvider = { redoStack.isNotEmpty() },
             isUndoAvailableProvider = { paths.isNotEmpty() },
             pathsProvider = { paths },
@@ -75,11 +75,11 @@ class MainViewModel(
             }
 
             is MainScreenEvent.ColorSelected -> {
-                if (state.value.colorSelectorState == ColorSelectorState.Hidden) return
+                if (state.value.additionalToolsState == AdditionalToolsState.Hidden) return
                 _state.update {
                     it.copy(
                         selectedColor = event.color,
-                        colorSelectorState = ColorSelectorState.Hidden,
+                        additionalToolsState = AdditionalToolsState.Hidden,
                         interactionType = InteractionType.Drawing,
                     )
                 }
@@ -88,24 +88,42 @@ class MainViewModel(
             MainScreenEvent.ColorSelectorClicked -> {
                 _state.update {
                     it.copy(
-                        colorSelectorState = if (it.colorSelectorState == ColorSelectorState.Hidden) {
-                            ColorSelectorState.Visible
+                        additionalToolsState = if (!it.additionalToolsState.isColorSelectorVisible) {
+                            AdditionalToolsState.ColorSelector(isExpanded = false)
                         } else {
-                            ColorSelectorState.Hidden
+                            AdditionalToolsState.Hidden
                         }
                     )
                 }
             }
 
             MainScreenEvent.ExtendedColorSelectorClicked -> {
+                val additionalToolsState =
+                    state.value.additionalToolsState as? AdditionalToolsState.ColorSelector ?: return
                 _state.update {
                     it.copy(
-                        colorSelectorState = if (it.colorSelectorState == ColorSelectorState.Visible) {
-                            ColorSelectorState.Expanded
+                        additionalToolsState = additionalToolsState.copy(
+                            isExpanded = !additionalToolsState.isExpanded,
+                        )
+                    )
+                }
+            }
+
+            MainScreenEvent.WidthSelectorClicked -> {
+                _state.update {
+                    it.copy(
+                        additionalToolsState = if (it.additionalToolsState == AdditionalToolsState.WidthSelector) {
+                            AdditionalToolsState.Hidden
                         } else {
-                            ColorSelectorState.Visible
+                            AdditionalToolsState.WidthSelector
                         }
                     )
+                }
+            }
+
+            is MainScreenEvent.WidthSelected -> {
+                _state.update {
+                    it.copy(selectedWidthPx = event.widthPx)
                 }
             }
         }

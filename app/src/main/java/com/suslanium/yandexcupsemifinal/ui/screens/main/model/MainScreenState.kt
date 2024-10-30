@@ -9,7 +9,7 @@ data class MainScreenState(
     val selectedColor: Color,
     val selectedWidthPx: Float,
     val interactionType: InteractionType,
-    val colorSelectorState: ColorSelectorState,
+    val additionalToolsState: AdditionalToolsState,
     private val isRedoAvailableProvider: () -> Boolean,
     private val isUndoAvailableProvider: () -> Boolean,
     private val pathsProvider: () -> List<PathInfo>,

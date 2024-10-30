@@ -25,6 +25,7 @@ import com.suslanium.yandexcupsemifinal.ui.screens.main.components.BottomToolbar
 import com.suslanium.yandexcupsemifinal.ui.screens.main.components.colorselector.ColorSelector
 import com.suslanium.yandexcupsemifinal.ui.screens.main.components.DrawZone
 import com.suslanium.yandexcupsemifinal.ui.screens.main.components.TopToolbar
+import com.suslanium.yandexcupsemifinal.ui.screens.main.components.WidthSelector
 
 @Composable
 fun MainScreen() {
@@ -69,6 +70,10 @@ fun MainScreen() {
             )
         }
         ColorSelector(
+            state = state,
+            onEvent = viewModel::processEvent,
+        )
+        WidthSelector(
             state = state,
             onEvent = viewModel::processEvent,
         )
