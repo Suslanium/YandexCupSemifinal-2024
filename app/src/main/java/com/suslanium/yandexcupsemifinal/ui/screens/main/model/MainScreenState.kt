@@ -9,10 +9,11 @@ data class MainScreenState(
     val selectedColor: Color,
     val selectedWidthPx: Float,
     val interactionType: InteractionType,
+    val interactionBlock: InteractionBlock,
     val additionalToolsState: AdditionalToolsState,
     val frames: List<UiFrame>,
     val currentFrameIndex: Int,
-    val currentPathPoints: List<Offset>,
+    val newPathPoints: List<Offset>,
 ) {
     val actualColor: Color
         get() = when (interactionType) {
@@ -34,5 +35,11 @@ data class MainScreenState(
 
     val isFrameDeletionAvailable: Boolean
         get() = currentFrameIndex > 0
+
+    val isPlaybackAvailable: Boolean
+        get() = frames.size > 1
+
+    val isPlaybackPauseAvailable: Boolean
+        get() = interactionBlock == InteractionBlock.Playback
 
 }

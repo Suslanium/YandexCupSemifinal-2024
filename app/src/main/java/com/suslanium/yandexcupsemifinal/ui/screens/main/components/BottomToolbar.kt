@@ -1,5 +1,6 @@
 package com.suslanium.yandexcupsemifinal.ui.screens.main.components
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -12,12 +13,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.suslanium.yandexcupsemifinal.R
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.AdditionalToolsState
+import com.suslanium.yandexcupsemifinal.ui.screens.main.model.InteractionBlock
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenEvent
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenState
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.InteractionType
@@ -28,7 +32,10 @@ fun BottomToolbar(
     state: MainScreenState,
     onEvent: (MainScreenEvent) -> Unit,
 ) {
-    Row {
+    val alpha by animateFloatAsState(
+        targetValue = if (state.interactionBlock == InteractionBlock.None) 1f else 0f,
+    )
+    Row(modifier = Modifier.alpha(alpha)) {
         IconButton(
             onClick = { onEvent(MainScreenEvent.InteractionTypeChanged(InteractionType.Drawing)) },
             modifier = Modifier.size(32.dp),

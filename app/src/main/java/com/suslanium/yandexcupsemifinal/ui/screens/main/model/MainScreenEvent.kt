@@ -30,4 +30,8 @@ sealed interface MainScreenEvent {
     data object Undo : MainScreenEvent
 
     data object Redo : MainScreenEvent
+
+    data object StartPlayback : MainScreenEvent
+
+    data object StopPlayback : MainScreenEvent
 }

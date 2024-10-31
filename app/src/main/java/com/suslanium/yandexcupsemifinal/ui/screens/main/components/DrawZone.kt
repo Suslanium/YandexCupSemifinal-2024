@@ -12,6 +12,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import com.suslanium.yandexcupsemifinal.R
+import com.suslanium.yandexcupsemifinal.ui.screens.main.model.InteractionBlock
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenEvent
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenState
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.createPathFromPoints
@@ -47,7 +48,7 @@ fun DrawZone(
             }
     ) {
         with(drawContext.canvas.nativeCanvas) {
-            if (state.currentFrameIndex > 0) {
+            if (state.currentFrameIndex > 0 && state.interactionBlock == InteractionBlock.None) {
                 val firstCheckPoint = saveLayer(null, null)
                 state.frames[state.currentFrameIndex - 1].paths.forEach { pathInfo ->
                     drawPath(
@@ -76,7 +77,7 @@ fun DrawZone(
             }
             drawPath(
                 color = state.actualColor,
-                path = createPathFromPoints(state.currentPathPoints),
+                path = createPathFromPoints(state.newPathPoints),
                 style = Stroke(
                     width = state.selectedWidthPx,
                     cap = StrokeCap.Round,

@@ -31,11 +31,10 @@ fun createPathFromPoints(currentPathPoints: Iterable<Offset>): Path {
 }
 
 fun createPathInfo(
-    currentPathPoints: Iterable<Offset>,
     state: MainScreenState,
 ): PathInfo {
     return PathInfo(
-        path = createPathFromPoints(currentPathPoints),
+        path = createPathFromPoints(state.newPathPoints),
         width = state.selectedWidthPx,
         color = state.actualColor,
         blendMode = state.blendMode,
