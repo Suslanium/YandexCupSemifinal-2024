@@ -5,7 +5,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.AdditionalToolsState
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.Frame
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.InteractionBlock
@@ -13,12 +12,9 @@ import com.suslanium.yandexcupsemifinal.ui.screens.main.model.InteractionType
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenEvent
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenState
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.createPathInfo
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 class MainViewModel(
     defaultLineWidthPx: Float,
@@ -28,8 +24,6 @@ class MainViewModel(
     //TODO implement non integer-constrained list
     private val frames = mutableStateListOf(Frame())
     private val newPathPoints = mutableStateListOf<Offset>()
-
-    private var playbackJob: Job? = null
 
     private val _state = MutableStateFlow(
         MainScreenState(
@@ -176,39 +170,44 @@ class MainViewModel(
                 if (_state.value.interactionBlock != InteractionBlock.None) return
                 if (!_state.value.isPlaybackAvailable) return
                 if (newPathPoints.isNotEmpty()) {
-                    //TODO cancel interaction
                     newPathPoints.clear()
                 }
                 _state.update {
                     it.copy(
                         interactionBlock = InteractionBlock.Playback,
                         additionalToolsState = AdditionalToolsState.Hidden,
-                        currentFrameIndex = 0,
                     )
-                }
-                playbackJob = viewModelScope.launch {
-                    while (true) {
-                        if (_state.value.currentFrameIndex == frames.lastIndex) {
-                            _state.update {
-                                it.copy(currentFrameIndex = 0)
-                            }
-                            delay(32)
-                        }
-                        _state.update {
-                            it.copy(currentFrameIndex = it.currentFrameIndex + 1)
-                        }
-                        delay(32)
-                    }
                 }
             }
 
             MainScreenEvent.StopPlayback -> {
                 if (!_state.value.isPlaybackPauseAvailable) return
-                playbackJob?.cancel()
                 _state.update {
                     it.copy(
                         interactionBlock = InteractionBlock.None,
-                        currentFrameIndex = frames.lastIndex,
+                    )
+                }
+            }
+
+            is MainScreenEvent.FrameSelected -> {
+                if (_state.value.interactionBlock != InteractionBlock.FrameSelect) return
+                _state.update {
+                    it.copy(
+                        currentFrameIndex = event.frameIndex,
+                        interactionBlock = InteractionBlock.None,
+                    )
+                }
+            }
+
+            MainScreenEvent.FrameSelectionClicked -> {
+                if (_state.value.interactionBlock != InteractionBlock.None) return
+                if (newPathPoints.isNotEmpty()) {
+                    newPathPoints.clear()
+                }
+                _state.update {
+                    it.copy(
+                        interactionBlock = InteractionBlock.FrameSelect,
+                        additionalToolsState = AdditionalToolsState.Hidden,
                     )
                 }
             }

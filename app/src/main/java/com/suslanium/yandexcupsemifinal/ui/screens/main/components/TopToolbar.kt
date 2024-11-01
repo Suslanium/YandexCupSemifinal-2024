@@ -30,6 +30,9 @@ fun TopToolbar(
     val alpha by animateFloatAsState(
         targetValue = if (state.interactionBlock == InteractionBlock.None) 1f else 0f,
     )
+    val playbackAlpha by animateFloatAsState(
+        targetValue = if (state.interactionBlock == InteractionBlock.None || state.interactionBlock == InteractionBlock.Playback) 1f else 0f,
+    )
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
         IconButton(
             onClick = { onEvent(MainScreenEvent.Undo) },
@@ -80,10 +83,21 @@ fun TopToolbar(
                 tint = MaterialTheme.colorScheme.onSurface,
             )
         }
+        Spacer(modifier = Modifier.width(16.dp))
+        IconButton(
+            onClick = { onEvent(MainScreenEvent.FrameSelectionClicked) },
+            modifier = Modifier.size(32.dp).alpha(alpha),
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.ic_frame_select),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurface,
+            )
+        }
         Spacer(modifier = Modifier.weight(1f))
         IconButton(
             onClick = { onEvent(MainScreenEvent.StopPlayback) },
-            modifier = Modifier.size(32.dp),
+            modifier = Modifier.size(32.dp).alpha(playbackAlpha),
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_pause),

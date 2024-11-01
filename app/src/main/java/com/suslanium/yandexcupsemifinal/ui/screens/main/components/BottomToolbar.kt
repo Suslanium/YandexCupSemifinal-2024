@@ -3,6 +3,7 @@ package com.suslanium.yandexcupsemifinal.ui.screens.main.components
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -31,11 +32,12 @@ import com.suslanium.yandexcupsemifinal.ui.screens.main.model.iconColor
 fun BottomToolbar(
     state: MainScreenState,
     onEvent: (MainScreenEvent) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val alpha by animateFloatAsState(
         targetValue = if (state.interactionBlock == InteractionBlock.None) 1f else 0f,
     )
-    Row(modifier = Modifier.alpha(alpha)) {
+    Row(modifier = modifier.alpha(alpha), horizontalArrangement = Arrangement.Center) {
         IconButton(
             onClick = { onEvent(MainScreenEvent.InteractionTypeChanged(InteractionType.Drawing)) },
             modifier = Modifier.size(32.dp),
