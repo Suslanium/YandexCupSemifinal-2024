@@ -25,7 +25,7 @@ sealed interface MainScreenEvent {
 
     data object FrameSelectionClicked : MainScreenEvent
 
-    data class FrameSelected(val frameIndex: Int) : MainScreenEvent
+    data class FrameSelected(val frameIndex: Long) : MainScreenEvent
 
     data object NewFrameClicked : MainScreenEvent
 

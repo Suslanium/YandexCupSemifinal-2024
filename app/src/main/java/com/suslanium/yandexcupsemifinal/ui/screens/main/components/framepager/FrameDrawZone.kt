@@ -3,19 +3,11 @@ package com.suslanium.yandexcupsemifinal.ui.screens.main.components.framepager
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import com.suslanium.yandexcupsemifinal.R
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.InteractionBlock
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenEvent
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenState
@@ -25,17 +17,11 @@ import com.suslanium.yandexcupsemifinal.ui.screens.main.model.createPathFromPoin
 fun FrameDrawZone(
     state: MainScreenState,
     onEvent: (MainScreenEvent) -> Unit,
-    frameIndex: Int,
+    frameIndex: Long,
     modifier: Modifier = Modifier,
 ) {
     Canvas(
         modifier = modifier
-            .padding(horizontal = 16.dp)
-            .clip(RoundedCornerShape(20.dp))
-            .paint(
-                painter = painterResource(R.drawable.drawing_bg),
-                contentScale = ContentScale.Crop,
-            )
             .pointerInput(state) {
                 if (state.interactionBlock == InteractionBlock.FrameSelect) {
                     detectTapGestures {

@@ -11,8 +11,8 @@ data class MainScreenState(
     val interactionType: InteractionType,
     val interactionBlock: InteractionBlock,
     val additionalToolsState: AdditionalToolsState,
-    val frames: List<UiFrame>,
-    val currentFrameIndex: Int,
+    val frames: LongDoublyLinkedList<UiFrame>,
+    val currentFrameIndex: Long,
     val newPathPoints: List<Offset>,
 ) {
     val actualColor: Color

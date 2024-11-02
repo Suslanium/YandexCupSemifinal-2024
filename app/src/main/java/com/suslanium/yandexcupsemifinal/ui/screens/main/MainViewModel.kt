@@ -12,6 +12,7 @@ import com.suslanium.yandexcupsemifinal.ui.screens.main.model.InteractionType
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenEvent
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenState
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.createPathInfo
+import com.suslanium.yandexcupsemifinal.ui.screens.main.model.mutableLongListOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -21,8 +22,7 @@ class MainViewModel(
     defaultColor: Color,
 ) : ViewModel() {
 
-    //TODO implement non integer-constrained list
-    private val frames = mutableStateListOf(Frame())
+    private val frames = mutableLongListOf(Frame())
     private val newPathPoints = mutableStateListOf<Offset>()
 
     private val _state = MutableStateFlow(

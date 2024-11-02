@@ -1,7 +1,5 @@
 package com.suslanium.yandexcupsemifinal.ui.screens.main.components.framepager
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.pager.PagerState
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.NonCancellable
@@ -11,9 +9,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
-@OptIn(ExperimentalFoundationApi::class)
 fun CoroutineScope.ensureCurrentFrameIsShownAfterPlayback(
-    pagerState: PagerState,
+    longPagerScope: LongPagerScope,
     state: MainScreenState,
 ) {
     launch {
@@ -21,23 +18,21 @@ fun CoroutineScope.ensureCurrentFrameIsShownAfterPlayback(
             awaitCancellation()
         }.onFailure {
             withContext(NonCancellable) {
-                pagerState.scrollToPage(state.currentFrameIndex)
+                longPagerScope.scrollToPage(state.currentFrameIndex)
             }
         }
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
-suspend fun invokePlayback(
-    pagerState: PagerState,
+suspend fun LongPagerScope.invokePlayback(
     state: MainScreenState,
 ) {
     while (true) {
-        if (pagerState.currentPage == state.frames.lastIndex) {
-            pagerState.scrollToPage(0)
+        if (currentPage == state.frames.lastIndex) {
+            scrollToPage(0)
             delay(32)
         }
-        pagerState.scrollToPage(pagerState.currentPage + 1)
+        scrollToPage(currentPage + 1)
         delay(32)
     }
 }
