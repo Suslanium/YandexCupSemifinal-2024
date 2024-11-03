@@ -14,4 +14,8 @@ sealed interface AdditionalToolsState {
 
     data object WidthSelector : AdditionalToolsState
 
+    data object TopPopupMenu : AdditionalToolsState
+
+    data object SpeedSelector : AdditionalToolsState
+
 }

@@ -35,7 +35,15 @@ sealed interface MainScreenEvent {
 
     data object Redo : MainScreenEvent
 
-    data object StartPlayback : MainScreenEvent
+    data object StartStopPlayback : MainScreenEvent
 
-    data object StopPlayback : MainScreenEvent
+    data object TopPopupMenuClicked : MainScreenEvent
+
+    data object DeleteAllFramesClicked : MainScreenEvent
+
+    data object DuplicateFrameClicked : MainScreenEvent
+
+    data object SpeedSelectorClicked : MainScreenEvent
+
+    data class SpeedSelected(val fps: Int) : MainScreenEvent
 }

@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">YandexCupSemifinal</string>
+    <string name="delete_all_frames">Delete all</string>
+    <string name="duplicate_frame">Duplicate frame</string>
+    <string name="change_speed">Change speed</string>
+    <string name="export_gif">Export to GIF</string>
 </resources>

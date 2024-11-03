@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">YandexCupSemifinal</string>
+    <string name="delete_all_frames">Удалить всё</string>
+    <string name="duplicate_frame">Дублировать кадр</string>
+    <string name="change_speed">Настроить скорость</string>
+    <string name="export_gif">Экспортировать в GIF</string>
+</resources>

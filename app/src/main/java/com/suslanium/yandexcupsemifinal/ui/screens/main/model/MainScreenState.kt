@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 data class MainScreenState(
     val selectedColor: Color,
     val selectedWidthPx: Float,
+    val selectedPlaybackFps: Int,
     val interactionType: InteractionType,
     val interactionBlock: InteractionBlock,
     val additionalToolsState: AdditionalToolsState,
@@ -36,10 +37,7 @@ data class MainScreenState(
     val isFrameDeletionAvailable: Boolean
         get() = currentFrameIndex > 0
 
-    val isPlaybackAvailable: Boolean
-        get() = frames.size > 1
-
-    val isPlaybackPauseAvailable: Boolean
-        get() = interactionBlock == InteractionBlock.Playback
+    val isPlayPauseAvailable: Boolean
+        get() = interactionBlock == InteractionBlock.None && frames.size > 1 || interactionBlock == InteractionBlock.Playback
 
 }

@@ -25,6 +25,7 @@ interface LongDoublyLinkedList<out T> {
 interface MutableLongDoublyLinkedList<T> : LongDoublyLinkedList<T> {
     fun add(index: Long, value: T)
     fun removeAt(index: Long): T
+    fun clear()
 }
 
 class MutableLongDoublyLinkedListImpl<T> : MutableLongDoublyLinkedList<T> {
@@ -111,6 +112,13 @@ class MutableLongDoublyLinkedListImpl<T> : MutableLongDoublyLinkedList<T> {
         }
         sizeValue--
         return node.value
+    }
+
+    override fun clear() {
+        firstNode = null
+        lastNode = null
+        lastAccessedNode = null
+        sizeValue = 0
     }
 
     private fun findNodeAtIndex(index: Long): Node<T> {

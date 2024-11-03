@@ -8,7 +8,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-
 fun CoroutineScope.ensureCurrentFrameIsShownAfterPlayback(
     longPagerScope: LongPagerScope,
     state: MainScreenState,
@@ -27,12 +26,13 @@ fun CoroutineScope.ensureCurrentFrameIsShownAfterPlayback(
 suspend fun LongPagerScope.invokePlayback(
     state: MainScreenState,
 ) {
+    val frameDelay = 1000L / state.selectedPlaybackFps
     while (true) {
         if (currentPage == state.frames.lastIndex) {
             scrollToPage(0)
-            delay(32)
+            delay(frameDelay)
         }
         scrollToPage(currentPage + 1)
-        delay(32)
+        delay(frameDelay)
     }
 }

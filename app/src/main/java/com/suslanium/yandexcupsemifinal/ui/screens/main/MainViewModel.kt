@@ -11,7 +11,6 @@ import com.suslanium.yandexcupsemifinal.ui.screens.main.model.InteractionBlock
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.InteractionType
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenEvent
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenState
-import com.suslanium.yandexcupsemifinal.ui.screens.main.model.createPathInfo
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.mutableLongListOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -29,6 +28,7 @@ class MainViewModel(
         MainScreenState(
             selectedColor = defaultColor,
             selectedWidthPx = defaultLineWidthPx,
+            selectedPlaybackFps = 24,
             interactionType = InteractionType.Drawing,
             interactionBlock = InteractionBlock.None,
             additionalToolsState = AdditionalToolsState.Hidden,
@@ -53,12 +53,8 @@ class MainViewModel(
 
             MainScreenEvent.PathFinished -> {
                 if (_state.value.interactionBlock != InteractionBlock.None) return
-                val pathInfo = createPathInfo(
-                    state = _state.value,
-                )
                 val frame = frames[_state.value.currentFrameIndex]
-                frame.mutablePaths.add(pathInfo)
-                frame.mutableRedoStack.clear()
+                frame.addPath(_state.value)
                 newPathPoints.clear()
             }
 
@@ -70,22 +66,18 @@ class MainViewModel(
             MainScreenEvent.Redo -> {
                 if (_state.value.interactionBlock != InteractionBlock.None) return
                 val frame = frames[_state.value.currentFrameIndex]
-                frame.mutableRedoStack.removeLastOrNull()?.let { pathInfo ->
-                    frame.mutablePaths.add(pathInfo)
-                }
+                frame.redo()
             }
 
             MainScreenEvent.Undo -> {
                 if (_state.value.interactionBlock != InteractionBlock.None) return
                 val frame = frames[_state.value.currentFrameIndex]
-                frame.mutablePaths.removeLastOrNull()?.let { pathInfo ->
-                    frame.mutableRedoStack.add(pathInfo)
-                }
+                frame.undo()
             }
 
             is MainScreenEvent.ColorSelected -> {
                 if (_state.value.interactionBlock != InteractionBlock.None) return
-                if (_state.value.additionalToolsState == AdditionalToolsState.Hidden) return
+                if (_state.value.additionalToolsState !is AdditionalToolsState.ColorSelector) return
                 _state.update {
                     it.copy(
                         selectedColor = event.color,
@@ -166,26 +158,24 @@ class MainViewModel(
                 }
             }
 
-            MainScreenEvent.StartPlayback -> {
-                if (_state.value.interactionBlock != InteractionBlock.None) return
-                if (!_state.value.isPlaybackAvailable) return
-                if (newPathPoints.isNotEmpty()) {
-                    newPathPoints.clear()
-                }
-                _state.update {
-                    it.copy(
-                        interactionBlock = InteractionBlock.Playback,
-                        additionalToolsState = AdditionalToolsState.Hidden,
-                    )
-                }
-            }
-
-            MainScreenEvent.StopPlayback -> {
-                if (!_state.value.isPlaybackPauseAvailable) return
-                _state.update {
-                    it.copy(
-                        interactionBlock = InteractionBlock.None,
-                    )
+            MainScreenEvent.StartStopPlayback -> {
+                if (_state.value.interactionBlock == InteractionBlock.None) {
+                    if (frames.size <= 1) return
+                    if (newPathPoints.isNotEmpty()) {
+                        newPathPoints.clear()
+                    }
+                    _state.update {
+                        it.copy(
+                            interactionBlock = InteractionBlock.Playback,
+                            additionalToolsState = AdditionalToolsState.Hidden,
+                        )
+                    }
+                } else if (_state.value.interactionBlock == InteractionBlock.Playback) {
+                    _state.update {
+                        it.copy(
+                            interactionBlock = InteractionBlock.None,
+                        )
+                    }
                 }
             }
 
@@ -208,6 +198,70 @@ class MainViewModel(
                     it.copy(
                         interactionBlock = InteractionBlock.FrameSelect,
                         additionalToolsState = AdditionalToolsState.Hidden,
+                    )
+                }
+            }
+
+            MainScreenEvent.TopPopupMenuClicked -> {
+                if (_state.value.interactionBlock != InteractionBlock.None) return
+                _state.update {
+                    it.copy(
+                        additionalToolsState =
+                        if (it.additionalToolsState == AdditionalToolsState.TopPopupMenu ||
+                            it.additionalToolsState == AdditionalToolsState.SpeedSelector) {
+                            AdditionalToolsState.Hidden
+                        } else {
+                            AdditionalToolsState.TopPopupMenu
+                        }
+                    )
+                }
+            }
+
+            MainScreenEvent.DeleteAllFramesClicked -> {
+                if (_state.value.interactionBlock != InteractionBlock.None) return
+                if (_state.value.additionalToolsState != AdditionalToolsState.TopPopupMenu) return
+                frames.clear()
+                frames.add(0, Frame())
+                _state.update {
+                    it.copy(
+                        currentFrameIndex = 0,
+                        additionalToolsState = AdditionalToolsState.Hidden,
+                    )
+                }
+            }
+
+            MainScreenEvent.DuplicateFrameClicked -> {
+                if (_state.value.interactionBlock != InteractionBlock.None) return
+                if (_state.value.additionalToolsState != AdditionalToolsState.TopPopupMenu) return
+                if (newPathPoints.isNotEmpty()) {
+                    //TODO cancel interaction
+                    newPathPoints.clear()
+                }
+                frames.add(_state.value.currentFrameIndex + 1, frames[_state.value.currentFrameIndex].copy())
+                _state.update {
+                    it.copy(
+                        currentFrameIndex = it.currentFrameIndex + 1,
+                        additionalToolsState = AdditionalToolsState.Hidden,
+                    )
+                }
+            }
+
+            MainScreenEvent.SpeedSelectorClicked -> {
+                if (_state.value.interactionBlock != InteractionBlock.None) return
+                if (_state.value.additionalToolsState != AdditionalToolsState.TopPopupMenu) return
+                _state.update {
+                    it.copy(
+                        additionalToolsState = AdditionalToolsState.SpeedSelector,
+                    )
+                }
+            }
+
+            is MainScreenEvent.SpeedSelected -> {
+                if (_state.value.interactionBlock != InteractionBlock.None) return
+                if (_state.value.additionalToolsState != AdditionalToolsState.SpeedSelector) return
+                _state.update {
+                    it.copy(
+                        selectedPlaybackFps = event.fps.coerceIn(1, 60),
                     )
                 }
             }

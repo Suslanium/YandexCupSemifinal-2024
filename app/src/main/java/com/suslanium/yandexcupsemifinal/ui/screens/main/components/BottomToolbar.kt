@@ -26,7 +26,6 @@ import com.suslanium.yandexcupsemifinal.ui.screens.main.model.InteractionBlock
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenEvent
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenState
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.InteractionType
-import com.suslanium.yandexcupsemifinal.ui.screens.main.model.iconColor
 
 @Composable
 fun BottomToolbar(
@@ -45,7 +44,11 @@ fun BottomToolbar(
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_pencil),
                 contentDescription = null,
-                tint = state.interactionType.iconColor(InteractionType.Drawing),
+                tint = if (state.interactionType == InteractionType.Drawing) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    MaterialTheme.colorScheme.onSurface
+                },
             )
         }
         Spacer(modifier = Modifier.width(16.dp))
@@ -56,7 +59,11 @@ fun BottomToolbar(
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_eraser),
                 contentDescription = null,
-                tint = state.interactionType.iconColor(InteractionType.Erasing),
+                tint = if (state.interactionType == InteractionType.Erasing) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    MaterialTheme.colorScheme.onSurface
+                },
             )
         }
         Spacer(modifier = Modifier.width(16.dp))
@@ -65,7 +72,7 @@ fun BottomToolbar(
             modifier = Modifier.size(32.dp),
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_menu),
+                imageVector = ImageVector.vectorResource(R.drawable.ic_brush_size),
                 contentDescription = null,
                 modifier = Modifier.size(32.dp),
                 tint = if (state.additionalToolsState == AdditionalToolsState.WidthSelector) {

@@ -20,6 +20,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.suslanium.yandexcupsemifinal.ui.screens.main.components.BottomToolbar
+import com.suslanium.yandexcupsemifinal.ui.screens.main.components.SpeedSelector
+import com.suslanium.yandexcupsemifinal.ui.screens.main.components.TopPopupMenu
 import com.suslanium.yandexcupsemifinal.ui.screens.main.components.colorselector.ColorSelector
 import com.suslanium.yandexcupsemifinal.ui.screens.main.components.framepager.FramePager
 import com.suslanium.yandexcupsemifinal.ui.screens.main.components.TopToolbar
@@ -79,6 +81,14 @@ fun MainScreen() {
             onEvent = viewModel::processEvent,
         )
         WidthSelector(
+            state = state,
+            onEvent = viewModel::processEvent,
+        )
+        TopPopupMenu(
+            state = state,
+            onEvent = viewModel::processEvent,
+        )
+        SpeedSelector(
             state = state,
             onEvent = viewModel::processEvent,
         )

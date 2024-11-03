@@ -67,7 +67,11 @@ fun BoxScope.ColorSelector(
             .padding(bottom = BottomContentHeight)
             .clip(RoundedCornerShape(4.dp))
             .background(SemiTransparentBackground)
-            .border(1.dp, SemiTransparentBorder)
+            .border(
+                width = 1.dp,
+                color = SemiTransparentBorder,
+                shape = RoundedCornerShape(4.dp),
+            )
             .padding(SelectorRowPadding)
     ) {
         IconButton(
@@ -116,7 +120,11 @@ fun BoxScope.ColorSelector(
                 .width(SelectorRowWidth)
                 .clip(RoundedCornerShape(4.dp))
                 .background(SemiTransparentBackground)
-                .border(1.dp, SemiTransparentBorder)
+                .border(
+                    width = 1.dp,
+                    color = SemiTransparentBorder,
+                    shape = RoundedCornerShape(4.dp),
+                )
                 .padding(SelectorRowPadding)
         ) {
             ExtendedColorSelector(
