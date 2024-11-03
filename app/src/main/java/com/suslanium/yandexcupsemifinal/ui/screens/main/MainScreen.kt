@@ -27,6 +27,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.suslanium.yandexcupsemifinal.ui.screens.main.components.BottomToolbar
 import com.suslanium.yandexcupsemifinal.ui.screens.main.components.FullScreenLoadingIndicator
 import com.suslanium.yandexcupsemifinal.ui.screens.main.components.SpeedSelector
+import com.suslanium.yandexcupsemifinal.ui.screens.main.components.SwipeIndicators
 import com.suslanium.yandexcupsemifinal.ui.screens.main.components.TopPopupMenu
 import com.suslanium.yandexcupsemifinal.ui.screens.main.components.TopToolbar
 import com.suslanium.yandexcupsemifinal.ui.screens.main.components.WidthSelector
@@ -123,6 +124,7 @@ fun MainScreen() {
             state = state,
             onEvent = viewModel::processEvent,
         )
+        SwipeIndicators(state = state)
     }
 
     if (state.interactionBlock == InteractionBlock.GifSaving) {

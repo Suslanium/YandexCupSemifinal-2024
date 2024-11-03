@@ -20,6 +20,8 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.withContext
 
 private const val PAGER_PAGE_COUNT = 1001L
 
@@ -121,7 +123,9 @@ fun LongHorizontalPager(
         if (actualPage >= pageCount) {
             val loopIndexWithPagerPage = getLoopIndexWithPagerPage(pageCount - 1)
             currentLoopIndex = loopIndexWithPagerPage.loopIndex
-            pagerState.animateScrollToPage(loopIndexWithPagerPage.page)
+            withContext(NonCancellable) {
+                pagerState.animateScrollToPage(loopIndexWithPagerPage.page)
+            }
         } else if (!pagerState.isScrollInProgress) {
             if (pagerState.currentPage.toLong() == PAGER_PAGE_COUNT - 1 && actualPage < pageCount - 1) {
                 currentLoopIndex++
