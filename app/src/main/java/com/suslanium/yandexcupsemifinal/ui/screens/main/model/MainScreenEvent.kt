@@ -1,5 +1,6 @@
 package com.suslanium.yandexcupsemifinal.ui.screens.main.model
 
+import android.net.Uri
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 
@@ -46,4 +47,10 @@ sealed interface MainScreenEvent {
     data object SpeedSelectorClicked : MainScreenEvent
 
     data class SpeedSelected(val fps: Int) : MainScreenEvent
+
+    data class DrawCanvasSizeChanged(val width: Int, val height: Int) : MainScreenEvent
+
+    data object ExportToGifClicked : MainScreenEvent
+
+    data class ExportToGif(val uri: Uri) : MainScreenEvent
 }

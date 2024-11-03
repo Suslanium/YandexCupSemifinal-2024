@@ -12,7 +12,7 @@ data class MainScreenState(
     val interactionType: InteractionType,
     val interactionBlock: InteractionBlock,
     val additionalToolsState: AdditionalToolsState,
-    val frames: LongDoublyLinkedList<UiFrame>,
+    val frames: LongList<UiFrame>,
     val currentFrameIndex: Long,
     val newPathPoints: List<Offset>,
 ) {

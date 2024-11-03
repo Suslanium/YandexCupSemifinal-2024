@@ -1,28 +1,44 @@
 package com.suslanium.yandexcupsemifinal.ui.screens.main
 
+import android.content.Context
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.AdditionalToolsState
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.Frame
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.InteractionBlock
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.InteractionType
+import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenEffect
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenEvent
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenState
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.mutableLongListOf
+import com.suslanium.yandexcupsemifinal.ui.screens.main.model.saveGif
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class MainViewModel(
     defaultLineWidthPx: Float,
     defaultColor: Color,
+    private val applicationContext: Context,
 ) : ViewModel() {
+
+    companion object {
+        const val GIF_MIME_TYPE = "image/gif"
+        const val ANIMATION_FILE_NAME = "animation.gif"
+    }
 
     private val frames = mutableLongListOf(Frame())
     private val newPathPoints = mutableStateListOf<Offset>()
+    private var canvasWidth = 0
+    private var canvasHeight = 0
 
     private val _state = MutableStateFlow(
         MainScreenState(
@@ -38,6 +54,9 @@ class MainViewModel(
         )
     )
     val state = _state.asStateFlow()
+
+    private val _effects = MutableSharedFlow<MainScreenEffect>()
+    val effects = _effects.asSharedFlow()
 
     fun processEvent(event: MainScreenEvent) {
         when (event) {
@@ -265,6 +284,49 @@ class MainViewModel(
                     )
                 }
             }
+
+            is MainScreenEvent.DrawCanvasSizeChanged -> {
+                canvasWidth = event.width
+                canvasHeight = event.height
+            }
+
+            MainScreenEvent.ExportToGifClicked -> {
+                if (_state.value.interactionBlock != InteractionBlock.None) return
+                if (_state.value.additionalToolsState != AdditionalToolsState.TopPopupMenu) return
+                _state.update {
+                    it.copy(
+                        additionalToolsState = AdditionalToolsState.Hidden,
+                    )
+                }
+                viewModelScope.launch {
+                    _effects.emit(MainScreenEffect.ChooseFileLocation)
+                }
+            }
+
+            is MainScreenEvent.ExportToGif -> {
+                if (_state.value.interactionBlock != InteractionBlock.None) return
+                viewModelScope.launch(Dispatchers.Default) {
+                    _state.update {
+                        it.copy(
+                            interactionBlock = InteractionBlock.GifSaving,
+                        )
+                    }
+                    runCatching {
+                        applicationContext.saveGif(
+                            uri = event.uri,
+                            frames = frames,
+                            canvasWidth = canvasWidth,
+                            canvasHeight = canvasHeight,
+                            frameRate = _state.value.selectedPlaybackFps,
+                        )
+                    }
+                    _state.update {
+                        it.copy(
+                            interactionBlock = InteractionBlock.None,
+                        )
+                    }
+                }
+            }
         }
     }
 
@@ -274,9 +336,10 @@ class MainViewModel(
 class MainViewModelFactory(
     private val defaultLineWidthPx: Float,
     private val defaultColor: Color,
+    private val applicationContext: Context,
 ) : ViewModelProvider.NewInstanceFactory() {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return MainViewModel(defaultLineWidthPx, defaultColor) as T
+        return MainViewModel(defaultLineWidthPx, defaultColor, applicationContext) as T
     }
 }

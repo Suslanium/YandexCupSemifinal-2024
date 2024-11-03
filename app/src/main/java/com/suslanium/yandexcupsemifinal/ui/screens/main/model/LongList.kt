@@ -15,20 +15,20 @@ class NodeWithIndex<T>(
 
 private fun <T> Node<T>.asNodeWithIndex(index: Long) = NodeWithIndex(this, index)
 
-interface LongDoublyLinkedList<out T> {
+interface LongList<out T> {
     val size: Long
     val lastIndex: Long
 
     operator fun get(index: Long): T
 }
 
-interface MutableLongDoublyLinkedList<T> : LongDoublyLinkedList<T> {
+interface MutableLongList<T> : LongList<T> {
     fun add(index: Long, value: T)
     fun removeAt(index: Long): T
     fun clear()
 }
 
-class MutableLongDoublyLinkedListImpl<T> : MutableLongDoublyLinkedList<T> {
+class MutableLongDoublyLinkedList<T> : MutableLongList<T> {
     private var firstNode: Node<T>? = null
     private var lastNode: Node<T>? = null
     private var lastAccessedNode: NodeWithIndex<T>? = null
@@ -58,16 +58,19 @@ class MutableLongDoublyLinkedListImpl<T> : MutableLongDoublyLinkedList<T> {
                 firstNode = newNode
                 lastNode = newNode
             }
+
             index == 0L -> {
                 newNode.next = firstNode
                 firstNode?.prev = newNode
                 firstNode = newNode
             }
+
             index == size -> {
                 newNode.prev = lastNode
                 lastNode?.next = newNode
                 lastNode = newNode
             }
+
             else -> {
                 val node = findNodeAtIndex(index)
                 newNode.next = node
@@ -99,11 +102,13 @@ class MutableLongDoublyLinkedListImpl<T> : MutableLongDoublyLinkedList<T> {
                 node.next?.prev = null
                 lastAccessedNode = firstNode?.asNodeWithIndex(0)
             }
+
             node.next == null -> {
                 lastNode = node.prev
                 node.prev?.next = null
                 lastAccessedNode = lastNode?.asNodeWithIndex(size - 2)
             }
+
             else -> {
                 node.prev?.next = node.next
                 node.next?.prev = node.prev
@@ -148,9 +153,11 @@ class MutableLongDoublyLinkedListImpl<T> : MutableLongDoublyLinkedList<T> {
             distanceFromLastAccessed <= distanceFromFirst && distanceFromLastAccessed <= distanceFromLast -> {
                 lastAccessedNode
             }
+
             distanceFromFirst <= distanceFromLast -> {
                 firstNode?.asNodeWithIndex(0)
             }
+
             else -> {
                 lastNode?.asNodeWithIndex(size - 1)
             }
@@ -158,10 +165,17 @@ class MutableLongDoublyLinkedListImpl<T> : MutableLongDoublyLinkedList<T> {
     }
 }
 
-fun <T> mutableLongListOf() = MutableLongDoublyLinkedListImpl<T>()
-
-fun <T> mutableLongListOf(vararg elements: T) = MutableLongDoublyLinkedListImpl<T>().apply {
-    elements.forEachIndexed { index, element ->
-        add(index.toLong(), element)
+inline fun <T> LongList<T>.forEach(action: (T) -> Unit) {
+    for (i in 0 until size) {
+        action(get(i))
     }
 }
+
+fun <T> mutableLongListOf(): MutableLongList<T> = MutableLongDoublyLinkedList<T>()
+
+fun <T> mutableLongListOf(vararg elements: T): MutableLongList<T> =
+    MutableLongDoublyLinkedList<T>().apply {
+        elements.forEachIndexed { index, element ->
+            add(index.toLong(), element)
+        }
+    }

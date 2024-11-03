@@ -134,7 +134,10 @@ fun BoxScope.TopPopupMenu(
             )
         }
         Spacer(modifier = Modifier.height(TopPopupMenuPadding))
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = Modifier.clickable { onEvent(MainScreenEvent.ExportToGifClicked) },
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_gif),
                 contentDescription = null,

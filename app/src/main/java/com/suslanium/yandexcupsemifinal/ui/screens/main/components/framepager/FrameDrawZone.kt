@@ -5,9 +5,11 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onSizeChanged
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.InteractionBlock
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenEvent
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenState
@@ -44,6 +46,13 @@ fun FrameDrawZone(
                         },
                     )
                 }
+            }.onSizeChanged { size ->
+                onEvent(
+                    MainScreenEvent.DrawCanvasSizeChanged(
+                        width = size.width,
+                        height = size.height
+                    )
+                )
             }
     ) {
         with(drawContext.canvas.nativeCanvas) {
@@ -55,7 +64,7 @@ fun FrameDrawZone(
                         path = pathInfo.path,
                         style = Stroke(
                             width = pathInfo.width,
-                            cap = androidx.compose.ui.graphics.StrokeCap.Round,
+                            cap = StrokeCap.Round,
                         ),
                         blendMode = pathInfo.blendMode,
                     )
@@ -69,7 +78,7 @@ fun FrameDrawZone(
                     path = pathInfo.path,
                     style = Stroke(
                         width = pathInfo.width,
-                        cap = androidx.compose.ui.graphics.StrokeCap.Round,
+                        cap = StrokeCap.Round,
                     ),
                     blendMode = pathInfo.blendMode,
                 )
@@ -79,7 +88,7 @@ fun FrameDrawZone(
                 path = createPathFromPoints(state.newPathPoints),
                 style = Stroke(
                     width = state.selectedWidthPx,
-                    cap = androidx.compose.ui.graphics.StrokeCap.Round,
+                    cap = StrokeCap.Round,
                 ),
                 blendMode = state.blendMode,
             )
