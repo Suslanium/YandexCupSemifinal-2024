@@ -127,7 +127,8 @@ fun MainScreen() {
         SwipeIndicators(state = state)
     }
 
-    if (state.interactionBlock == InteractionBlock.GifSaving) {
+    if (state.interactionBlock == InteractionBlock.GifSaving ||
+        state.interactionBlock == InteractionBlock.FrameGeneration) {
         FullScreenLoadingIndicator()
     }
 }

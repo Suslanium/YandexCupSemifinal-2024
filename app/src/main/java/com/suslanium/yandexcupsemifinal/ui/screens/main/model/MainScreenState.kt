@@ -4,6 +4,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import com.suslanium.yandexcupsemifinal.ui.screens.main.model.frame.UiFrame
+import com.suslanium.yandexcupsemifinal.ui.screens.main.model.list.LongList
 
 data class MainScreenState(
     val selectedColor: Color,

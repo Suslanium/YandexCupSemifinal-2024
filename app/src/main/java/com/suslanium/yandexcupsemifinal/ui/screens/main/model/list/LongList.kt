@@ -1,4 +1,4 @@
-package com.suslanium.yandexcupsemifinal.ui.screens.main.model
+package com.suslanium.yandexcupsemifinal.ui.screens.main.model.list
 
 import kotlin.math.abs
 

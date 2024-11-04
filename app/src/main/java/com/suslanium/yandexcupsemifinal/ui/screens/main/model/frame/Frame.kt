@@ -1,4 +1,4 @@
-package com.suslanium.yandexcupsemifinal.ui.screens.main.model
+package com.suslanium.yandexcupsemifinal.ui.screens.main.model.frame
 
 import android.graphics.Bitmap
 import androidx.compose.runtime.mutableStateListOf
@@ -11,13 +11,14 @@ import androidx.compose.ui.graphics.PaintingStyle
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.nativeCanvas
+import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenState
 
 interface UiFrame {
     val paths: List<PathInfo>
     val redoStack: List<PathInfo>
 }
 
-class Frame : UiFrame {
+class Frame() : UiFrame {
     private val mutablePaths: SnapshotStateList<PathInfo> = mutableStateListOf()
     private val mutableRedoStack: SnapshotStateList<PathInfo> = mutableStateListOf()
 
@@ -26,6 +27,10 @@ class Frame : UiFrame {
 
     override val redoStack: List<PathInfo>
         get() = mutableRedoStack
+
+    constructor(paths: List<PathInfo>) : this() {
+        mutablePaths.addAll(paths)
+    }
 
     fun addPath(state: MainScreenState) {
         val pathInfo = createPathInfo(state)

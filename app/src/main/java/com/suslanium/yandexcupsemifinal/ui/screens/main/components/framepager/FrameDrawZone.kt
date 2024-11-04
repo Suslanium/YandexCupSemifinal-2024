@@ -13,7 +13,7 @@ import androidx.compose.ui.layout.onSizeChanged
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.InteractionBlock
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenEvent
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenState
-import com.suslanium.yandexcupsemifinal.ui.screens.main.model.createPathFromPoints
+import com.suslanium.yandexcupsemifinal.ui.screens.main.model.frame.createPathFromPoints
 
 @Composable
 fun FrameDrawZone(

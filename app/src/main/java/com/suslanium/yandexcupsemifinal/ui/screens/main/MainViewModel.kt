@@ -8,14 +8,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.AdditionalToolsState
-import com.suslanium.yandexcupsemifinal.ui.screens.main.model.Frame
+import com.suslanium.yandexcupsemifinal.ui.screens.main.model.frame.Frame
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.InteractionBlock
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.InteractionType
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenEffect
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenEvent
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenState
-import com.suslanium.yandexcupsemifinal.ui.screens.main.model.mutableLongListOf
-import com.suslanium.yandexcupsemifinal.ui.screens.main.model.saveGif
+import com.suslanium.yandexcupsemifinal.ui.screens.main.model.list.mutableLongListOf
+import com.suslanium.yandexcupsemifinal.ui.screens.main.model.frame.gif.saveGif
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

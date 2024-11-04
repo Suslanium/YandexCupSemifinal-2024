@@ -1,9 +1,10 @@
-package com.suslanium.yandexcupsemifinal.ui.screens.main.model
+package com.suslanium.yandexcupsemifinal.ui.screens.main.model.frame
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenState
 
 class PathInfo(
     val path: Path,
