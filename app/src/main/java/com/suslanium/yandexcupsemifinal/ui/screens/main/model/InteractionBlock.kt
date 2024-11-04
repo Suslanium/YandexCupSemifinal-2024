@@ -11,5 +11,4 @@ sealed interface InteractionBlock {
     data object Playback : InteractionBlock
 
     data object None : InteractionBlock
-
 }

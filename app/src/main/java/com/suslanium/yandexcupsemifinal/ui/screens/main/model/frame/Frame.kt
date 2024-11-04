@@ -19,8 +19,8 @@ interface UiFrame {
 }
 
 class Frame() : UiFrame {
-    private val mutablePaths: SnapshotStateList<PathInfo> = mutableStateListOf()
-    private val mutableRedoStack: SnapshotStateList<PathInfo> = mutableStateListOf()
+    val mutablePaths: SnapshotStateList<PathInfo> = mutableStateListOf()
+    val mutableRedoStack: SnapshotStateList<PathInfo> = mutableStateListOf()
 
     override val paths: List<PathInfo>
         get() = mutablePaths
@@ -31,59 +31,59 @@ class Frame() : UiFrame {
     constructor(paths: List<PathInfo>) : this() {
         mutablePaths.addAll(paths)
     }
+}
 
-    fun addPath(state: MainScreenState) {
-        val pathInfo = createPathInfo(state)
-        mutablePaths.add(pathInfo)
-        mutableRedoStack.clear()
+fun Frame.addPath(state: MainScreenState) {
+    val pathInfo = createPathInfo(state)
+    mutablePaths.add(pathInfo)
+    mutableRedoStack.clear()
+}
+
+fun Frame.undo() {
+    mutablePaths.removeLastOrNull()?.let { path ->
+        mutableRedoStack.add(path)
     }
+}
 
-    fun undo() {
-        mutablePaths.removeLastOrNull()?.let { path ->
-            mutableRedoStack.add(path)
-        }
+fun Frame.redo() {
+    mutableRedoStack.removeLastOrNull()?.let { path ->
+        mutablePaths.add(path)
     }
+}
 
-    fun redo() {
-        mutableRedoStack.removeLastOrNull()?.let { path ->
-            mutablePaths.add(path)
-        }
-    }
+fun Frame.copy(): Frame {
+    val newFrame = Frame()
+    newFrame.mutablePaths.addAll(mutablePaths.map { it.copy() })
+    newFrame.mutableRedoStack.addAll(mutableRedoStack.map { it.copy() })
+    return newFrame
+}
 
-    fun copy(): Frame {
-        val newFrame = Frame()
-        newFrame.mutablePaths.addAll(mutablePaths.map { it.copy() })
-        newFrame.mutableRedoStack.addAll(mutableRedoStack.map { it.copy() })
-        return newFrame
-    }
-
-    fun toBitmap(width: Int, height: Int): Bitmap {
-        val bitmap = ImageBitmap(width, height, hasAlpha = false)
-        Canvas(bitmap).apply {
-            drawRect(
+fun Frame.toBitmap(width: Int, height: Int): Bitmap {
+    val bitmap = ImageBitmap(width, height, hasAlpha = false)
+    Canvas(bitmap).apply {
+        drawRect(
+            paint = Paint().apply {
+                color = Color.White
+            },
+            left = 0f,
+            top = 0f,
+            right = width.toFloat(),
+            bottom = height.toFloat(),
+        )
+        val checkPoint = nativeCanvas.saveLayer(null, null)
+        for (path in paths) {
+            drawPath(
+                path = path.path,
                 paint = Paint().apply {
-                    color = Color.White
-                },
-                left = 0f,
-                top = 0f,
-                right = width.toFloat(),
-                bottom = height.toFloat(),
+                    color = path.color
+                    strokeWidth = path.width
+                    strokeCap = StrokeCap.Round
+                    blendMode = path.blendMode
+                    style = PaintingStyle.Stroke
+                }
             )
-            val checkPoint = nativeCanvas.saveLayer(null, null)
-            for (path in paths) {
-                drawPath(
-                    path = path.path,
-                    paint = Paint().apply {
-                        color = path.color
-                        strokeWidth = path.width
-                        strokeCap = StrokeCap.Round
-                        blendMode = path.blendMode
-                        style = PaintingStyle.Stroke
-                    }
-                )
-            }
-            nativeCanvas.restoreToCount(checkPoint)
         }
-        return bitmap.asAndroidBitmap()
+        nativeCanvas.restoreToCount(checkPoint)
     }
+    return bitmap.asAndroidBitmap()
 }

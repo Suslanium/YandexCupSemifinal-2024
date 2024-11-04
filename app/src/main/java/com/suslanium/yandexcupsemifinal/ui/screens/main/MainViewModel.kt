@@ -14,9 +14,13 @@ import com.suslanium.yandexcupsemifinal.ui.screens.main.model.InteractionType
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenEffect
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenEvent
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenState
+import com.suslanium.yandexcupsemifinal.ui.screens.main.model.frame.addPath
+import com.suslanium.yandexcupsemifinal.ui.screens.main.model.frame.copy
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.frame.generator.createFrameGenerator
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.list.mutableLongListOf
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.frame.gif.saveGif
+import com.suslanium.yandexcupsemifinal.ui.screens.main.model.frame.redo
+import com.suslanium.yandexcupsemifinal.ui.screens.main.model.frame.undo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

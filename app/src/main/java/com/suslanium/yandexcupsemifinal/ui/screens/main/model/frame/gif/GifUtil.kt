@@ -3,6 +3,7 @@ package com.suslanium.yandexcupsemifinal.ui.screens.main.model.frame.gif
 import android.content.Context
 import android.net.Uri
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.frame.Frame
+import com.suslanium.yandexcupsemifinal.ui.screens.main.model.frame.toBitmap
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.list.LongList
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.list.forEach
 import com.waynejo.androidndkgif.GifEncoder
