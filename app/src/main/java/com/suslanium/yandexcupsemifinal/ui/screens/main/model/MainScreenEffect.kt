@@ -4,4 +4,9 @@ sealed interface MainScreenEffect {
 
     data object ChooseFileLocation : MainScreenEffect
 
+    data object ShowEmptyFrameAmountError : MainScreenEffect
+
+    data object ShowInvalidFrameAmountError : MainScreenEffect
+
+    data object ShowGifExportError : MainScreenEffect
 }

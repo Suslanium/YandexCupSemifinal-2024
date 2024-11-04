@@ -14,6 +14,7 @@ import com.suslanium.yandexcupsemifinal.ui.screens.main.model.InteractionType
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenEffect
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenEvent
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenState
+import com.suslanium.yandexcupsemifinal.ui.screens.main.model.frame.generator.createFrameGenerator
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.list.mutableLongListOf
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.frame.gif.saveGif
 import kotlinx.coroutines.Dispatchers
@@ -156,7 +157,6 @@ class MainViewModel(
                 if (_state.value.interactionBlock != InteractionBlock.None) return
                 if (!_state.value.isFrameDeletionAvailable) return
                 if (newPathPoints.isNotEmpty()) {
-                    //TODO cancel interaction
                     newPathPoints.clear()
                 }
                 _state.value = _state.value.copy(
@@ -168,7 +168,6 @@ class MainViewModel(
             MainScreenEvent.NewFrameClicked -> {
                 if (_state.value.interactionBlock != InteractionBlock.None) return
                 if (newPathPoints.isNotEmpty()) {
-                    //TODO cancel interaction
                     processEvent(MainScreenEvent.PathFinished)
                 }
                 frames.add(_state.value.currentFrameIndex + 1, Frame())
@@ -253,7 +252,6 @@ class MainViewModel(
                 if (_state.value.interactionBlock != InteractionBlock.None) return
                 if (_state.value.additionalToolsState != AdditionalToolsState.TopPopupMenu) return
                 if (newPathPoints.isNotEmpty()) {
-                    //TODO cancel interaction
                     newPathPoints.clear()
                 }
                 frames.add(_state.value.currentFrameIndex + 1, frames[_state.value.currentFrameIndex].copy())
@@ -319,12 +317,77 @@ class MainViewModel(
                             canvasHeight = canvasHeight,
                             frameRate = _state.value.selectedPlaybackFps,
                         )
+                    }.onFailure {
+                        viewModelScope.launch { _effects.emit(MainScreenEffect.ShowGifExportError) }
                     }
                     _state.update {
                         it.copy(
                             interactionBlock = InteractionBlock.None,
                         )
                     }
+                }
+            }
+
+            MainScreenEvent.FrameGenerationClicked -> {
+                if (_state.value.interactionBlock != InteractionBlock.None) return
+                if (_state.value.additionalToolsState != AdditionalToolsState.TopPopupMenu) return
+                _state.update {
+                    it.copy(
+                        additionalToolsState = AdditionalToolsState.FrameGenerationDialog,
+                    )
+                }
+            }
+
+            is MainScreenEvent.FrameGenerationConfirmed -> {
+                if (_state.value.interactionBlock != InteractionBlock.None) return
+                if (_state.value.additionalToolsState != AdditionalToolsState.FrameGenerationDialog) return
+                if (event.frameAmount.isBlank()) {
+                    viewModelScope.launch { _effects.emit(MainScreenEffect.ShowEmptyFrameAmountError) }
+                    return
+                }
+                runCatching {
+                    event.frameAmount.toInt()
+                }.onFailure {
+                    viewModelScope.launch { _effects.emit(MainScreenEffect.ShowInvalidFrameAmountError) }
+                    return
+                }.onSuccess { frameAmount ->
+                    if (frameAmount < 1) {
+                        viewModelScope.launch { _effects.emit(MainScreenEffect.ShowInvalidFrameAmountError) }
+                        return
+                    }
+                    _state.update {
+                        it.copy(
+                            additionalToolsState = AdditionalToolsState.Hidden,
+                            interactionBlock = InteractionBlock.FrameGeneration,
+                        )
+                    }
+                    viewModelScope.launch(Dispatchers.Default) {
+                        createFrameGenerator(
+                            type = event.type,
+                            canvasWidth = canvasWidth,
+                            canvasHeight = canvasHeight,
+                            color = _state.value.selectedColor,
+                            strokeWidthPx = _state.value.selectedWidthPx,
+                        ).generateFrames(frameAmount).forEachIndexed { index, frame ->
+                            frames.add(_state.value.currentFrameIndex + index + 1, frame)
+                        }
+                        _state.update {
+                            it.copy(
+                                currentFrameIndex = it.currentFrameIndex + 1,
+                                interactionBlock = InteractionBlock.None,
+                            )
+                        }
+                    }
+                }
+            }
+
+            MainScreenEvent.FrameGenerationDismissed -> {
+                if (_state.value.interactionBlock != InteractionBlock.None) return
+                if (_state.value.additionalToolsState != AdditionalToolsState.FrameGenerationDialog) return
+                _state.update {
+                    it.copy(
+                        additionalToolsState = AdditionalToolsState.Hidden,
+                    )
                 }
             }
         }

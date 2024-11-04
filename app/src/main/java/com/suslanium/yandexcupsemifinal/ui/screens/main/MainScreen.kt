@@ -1,6 +1,7 @@
 package com.suslanium.yandexcupsemifinal.ui.screens.main
 
 import android.content.Intent
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -24,15 +25,17 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.suslanium.yandexcupsemifinal.R
 import com.suslanium.yandexcupsemifinal.ui.screens.main.components.BottomToolbar
+import com.suslanium.yandexcupsemifinal.ui.screens.main.components.FrameGenerationDialog
 import com.suslanium.yandexcupsemifinal.ui.screens.main.components.FullScreenLoadingIndicator
 import com.suslanium.yandexcupsemifinal.ui.screens.main.components.SpeedSelector
 import com.suslanium.yandexcupsemifinal.ui.screens.main.components.SwipeIndicators
-import com.suslanium.yandexcupsemifinal.ui.screens.main.components.TopPopupMenu
 import com.suslanium.yandexcupsemifinal.ui.screens.main.components.TopToolbar
 import com.suslanium.yandexcupsemifinal.ui.screens.main.components.WidthSelector
 import com.suslanium.yandexcupsemifinal.ui.screens.main.components.colorselector.ColorSelector
 import com.suslanium.yandexcupsemifinal.ui.screens.main.components.framepager.FramePager
+import com.suslanium.yandexcupsemifinal.ui.screens.main.components.popup.TopPopupMenu
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.InteractionBlock
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenEffect
 import com.suslanium.yandexcupsemifinal.ui.screens.main.model.MainScreenEvent
@@ -43,7 +46,7 @@ fun MainScreen() {
     val context = LocalContext.current
     val viewModel: MainViewModel = viewModel(
         factory = MainViewModelFactory(
-            defaultLineWidthPx = with(density) { 10.dp.toPx() },
+            defaultLineWidthPx = with(density) { 1.dp.toPx() },
             defaultColor = Color.Red,
             applicationContext = context.applicationContext,
         )
@@ -68,6 +71,30 @@ fun MainScreen() {
                         putExtra(Intent.EXTRA_TITLE, MainViewModel.ANIMATION_FILE_NAME)
                     }
                     launcher.launch(intent)
+                }
+
+                MainScreenEffect.ShowEmptyFrameAmountError -> {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.empty_frame_amount_error),
+                        Toast.LENGTH_LONG,
+                    ).show()
+                }
+
+                MainScreenEffect.ShowInvalidFrameAmountError -> {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.invalid_frame_amount_error),
+                        Toast.LENGTH_LONG,
+                    ).show()
+                }
+
+                MainScreenEffect.ShowGifExportError -> {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.gif_export_failed),
+                        Toast.LENGTH_LONG,
+                    ).show()
                 }
             }
         }
@@ -121,6 +148,10 @@ fun MainScreen() {
             onEvent = viewModel::processEvent,
         )
         SpeedSelector(
+            state = state,
+            onEvent = viewModel::processEvent,
+        )
+        FrameGenerationDialog(
             state = state,
             onEvent = viewModel::processEvent,
         )

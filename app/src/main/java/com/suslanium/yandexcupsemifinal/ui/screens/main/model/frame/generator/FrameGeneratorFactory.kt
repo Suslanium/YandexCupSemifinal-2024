@@ -4,7 +4,7 @@ import androidx.compose.ui.graphics.Color
 
 enum class FrameGeneratorType {
     KochSnowflake,
-    AntiKochSnowflake,
+    KochAntiSnowflake,
 }
 
 fun createFrameGenerator(
@@ -24,7 +24,7 @@ fun createFrameGenerator(
                 antiSnowflake = false,
             )
         }
-        FrameGeneratorType.AntiKochSnowflake -> {
+        FrameGeneratorType.KochAntiSnowflake -> {
             KochSnowflakeGenerator(
                 canvasWidth = canvasWidth,
                 canvasHeight = canvasHeight,

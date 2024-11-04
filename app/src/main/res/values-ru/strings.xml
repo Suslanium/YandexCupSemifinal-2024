@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">YandexCupSemifinal</string>
+    <string name="app_name">Flipnote</string>
     <string name="delete_all_frames">Удалить всё</string>
     <string name="duplicate_frame">Дублировать кадр</string>
     <string name="change_speed">Настроить скорость</string>
     <string name="export_gif">Экспортировать в GIF</string>
+    <string name="generate_frames">Сгенерировать кадры</string>
+    <string name="koch_snowflake">Снежинка Коха</string>
+    <string name="koch_antisnowflake">Антиснежинка Коха</string>
+    <string name="generation_type">Тип генерации</string>
+    <string name="frame_amount">Количество кадров</string>
+    <string name="generate">Сгенерировать</string>
+    <string name="empty_frame_amount_error">Количество кадров должно быть заполнено</string>
+    <string name="invalid_frame_amount_error">Некорректное количество кадров</string>
+    <string name="gif_export_failed">Не удалось экспортировать GIF</string>
 </resources>

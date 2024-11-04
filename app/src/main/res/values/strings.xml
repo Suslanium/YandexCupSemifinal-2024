@@ -1,7 +1,16 @@
 <resources>
-    <string name="app_name">YandexCupSemifinal</string>
+    <string name="app_name">Flipnote</string>
     <string name="delete_all_frames">Delete all</string>
     <string name="duplicate_frame">Duplicate frame</string>
     <string name="change_speed">Change speed</string>
     <string name="export_gif">Export to GIF</string>
+    <string name="generate_frames">Generate frames</string>
+    <string name="koch_snowflake">Koch snowflake</string>
+    <string name="koch_antisnowflake">Koch antisnowflake</string>
+    <string name="generation_type">Generation type</string>
+    <string name="frame_amount">Amount of frames</string>
+    <string name="generate">Generate</string>
+    <string name="empty_frame_amount_error">Amount of frames must be filled</string>
+    <string name="invalid_frame_amount_error">Invalid amount of frames</string>
+    <string name="gif_export_failed">GIF export failed</string>
 </resources>

@@ -18,4 +18,6 @@ sealed interface AdditionalToolsState {
 
     data object SpeedSelector : AdditionalToolsState
 
+    data object FrameGenerationDialog : AdditionalToolsState
+
 }

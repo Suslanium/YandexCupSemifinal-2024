@@ -3,6 +3,7 @@ package com.suslanium.yandexcupsemifinal.ui.screens.main.model
 import android.net.Uri
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import com.suslanium.yandexcupsemifinal.ui.screens.main.model.frame.generator.FrameGeneratorType
 
 sealed interface MainScreenEvent {
 
@@ -53,4 +54,10 @@ sealed interface MainScreenEvent {
     data object ExportToGifClicked : MainScreenEvent
 
     data class ExportToGif(val uri: Uri) : MainScreenEvent
+
+    data object FrameGenerationClicked : MainScreenEvent
+
+    data class FrameGenerationConfirmed(val type: FrameGeneratorType, val frameAmount: String) : MainScreenEvent
+
+    data object FrameGenerationDismissed : MainScreenEvent
 }
